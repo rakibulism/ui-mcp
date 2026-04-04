@@ -1,6 +1,6 @@
 {
   "name": "social-shots-mcp",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "CLI to run MCP server from Social Shots project",
   "bin": {
     "social-shots": "index.js"
@@ -28,5 +28,8 @@
   "bugs": {
     "url": "https://github.com/rakibulism/social-shots/issues"
   },
-  "homepage": "https://github.com/rakibulism/social-shots#readme"
+  "homepage": "https://github.com/rakibulism/social-shots#readme",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  }
 }

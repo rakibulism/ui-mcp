@@ -1,10 +1,11 @@
 # Social Shots MCP Server
 
-This folder contains a minimal MCP server for the Social Shots dataset.
+This folder contains MCP servers for the Social Shots dataset.
 
-## File
+## Available server runtimes
 
-- `server.py` — stdio MCP server exposing tools powered by `../shots-data.js`.
+- `server.mjs` — Node.js stdio MCP server (recommended for npm distribution).
+- `server.py` — Python stdio MCP server.
 
 ## Tools exposed
 
@@ -17,22 +18,43 @@ This folder contains a minimal MCP server for the Social Shots dataset.
 7. `get_similar_images`
 8. `create_video_sequence`
 
-## Run locally
+## Install via npm (internet users)
+
+After publishing to npm, users can run:
+
+```bash
+npx social-shots-mcp
+```
+
+or install globally:
+
+```bash
+npm i -g social-shots-mcp
+social-shots-mcp
+```
+
+## Run locally from repo
+
+Node server:
+
+```bash
+node mcp/server.mjs
+```
+
+Python server:
 
 ```bash
 python mcp/server.py
 ```
 
-Then send JSON-RPC lines via stdin (MCP stdio transport).
-
-## Example MCP client config (generic)
+## Example MCP client config (Node)
 
 ```json
 {
   "mcpServers": {
     "social-shots": {
-      "command": "python",
-      "args": ["/workspace/social-shots/mcp/server.py"]
+      "command": "npx",
+      "args": ["social-shots-mcp"]
     }
   }
 }
@@ -41,5 +63,5 @@ Then send JSON-RPC lines via stdin (MCP stdio transport).
 ## Notes
 
 - `prepare_video_payload` can return relative paths, or absolute URLs when `base_url` is provided.
-- `reecap_url` is included in the payload for quick video workflow handoff.
 - `create_video_sequence` provides frame durations and suggested social format metadata.
+- `reecap_url` is included for quick handoff to Reecap workflows.

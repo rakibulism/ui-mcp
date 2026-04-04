@@ -1,0 +1,21 @@
+{
+  "name": "social-shots-mcp",
+  "version": "0.1.0",
+  "description": "MCP server for Social Shots UI image dataset",
+  "type": "module",
+  "bin": {
+    "social-shots-mcp": "mcp/server.mjs"
+  },
+  "files": [
+    "mcp/server.mjs",
+    "mcp/server.py",
+    "mcp/README.md",
+    "shots-data.js",
+    "README.md"
+  ],
+  "keywords": ["mcp", "model-context-protocol", "design", "ui", "images"],
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  }
+}

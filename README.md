@@ -25,7 +25,8 @@ A curated collection of UI/UX design shot assets by **Rakibul**, including:
   - **Project view** (browse by project card)
   - **Single image view** (browse all images directly)
   - Layout switches: **Grid**, **List**, **Compact**
-  - Search and category filtering
+  - Search, category filtering, and design tag filtering
+  - Favorites collections (save projects + share favorites link)
 - Clicking any project in project view opens `project.html` with that project's details and images.
 - Clicking an image opens `viewer.html` with previous/next navigation, filmstrip thumbnails, download/open actions, and a **Make video with this project** shortcut to Reecap.
 
@@ -46,6 +47,8 @@ A curated collection of UI/UX design shot assets by **Rakibul**, including:
 ## MCP Integration
 
 A minimal MCP server is available under [`mcp/server.py`](./mcp/server.py), with setup details in [`mcp/README.md`](./mcp/README.md).
+
+The MCP server includes expanded tools for tags, similarity, and video sequencing workflows.
 
 ## License
 

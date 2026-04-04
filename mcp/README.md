@@ -13,6 +13,9 @@ This folder contains a minimal MCP server for the Social Shots dataset.
 3. `get_project_images`
 4. `search_images`
 5. `prepare_video_payload`
+6. `list_tags`
+7. `get_similar_images`
+8. `create_video_sequence`
 
 ## Run locally
 
@@ -39,3 +42,4 @@ Then send JSON-RPC lines via stdin (MCP stdio transport).
 
 - `prepare_video_payload` can return relative paths, or absolute URLs when `base_url` is provided.
 - `reecap_url` is included in the payload for quick video workflow handoff.
+- `create_video_sequence` provides frame durations and suggested social format metadata.

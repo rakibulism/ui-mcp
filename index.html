@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Social Shots Index</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <h1>Social Shots — Public Index</h1>
+      <p class="sub">Browse by project or by individual image with multiple layouts.</p>
+      <div class="controls">
+        <input id="search" placeholder="Search project, file, or folder..." />
+        <select id="mode">
+          <option value="projects">Project view</option>
+          <option value="images">Single image view</option>
+        </select>
+        <select id="category"></select>
+        <select id="layout">
+          <option value="grid">Grid layout</option>
+          <option value="list">List layout</option>
+          <option value="compact">Compact layout</option>
+        </select>
+      </div>
+      <div id="chips" class="chips"></div>
+    </div>
+  </header>
+
+  <main>
+    <div class="wrap">
+      <section id="results" class="results grid"></section>
+      <div id="empty" class="empty" hidden>No matching results.</div>
+    </div>
+  </main>
+
+  <script src="./shots-data.js"></script>
+  <script>
+    const DATA = window.SHOTS_DATA;
+    const results = document.getElementById('results');
+    const empty = document.getElementById('empty');
+    const search = document.getElementById('search');
+    const mode = document.getElementById('mode');
+    const category = document.getElementById('category');
+    const layout = document.getElementById('layout');
+    const chips = document.getElementById('chips');
+
+    function renderChips() {
+      const categoryChips = Object.entries(DATA.summary)
+        .sort((a,b) => a[0].localeCompare(b[0]))
+        .map(([name, count]) => `<span class="chip">${name}: <strong>${count}</strong></span>`)
+        .join('');
+      chips.innerHTML =
+        `<span class="chip">Projects: <strong>${DATA.totals.projects}</strong></span>` +
+        `<span class="chip">Images: <strong>${DATA.totals.images}</strong></span>` +
+        categoryChips;
+    }
+
+    function initCategories() {
+      category.innerHTML = ['All categories', ...Object.keys(DATA.summary).sort((a,b)=>a.localeCompare(b))]
+        .map(v => `<option value="${v}">${v}</option>`)
+        .join('');
+    }
+
+    function includeByCategory(item) {
+      return category.value === 'All categories' || item.category === category.value;
+    }
+
+    function includeBySearch(text) {
+      const q = search.value.trim().toLowerCase();
+      return !q || text.toLowerCase().includes(q);
+    }
+
+    function renderProjectCards(projects) {
+      return projects.map(p => {
+        const href = `./project.html?project=${encodeURIComponent(p.path)}`;
+        return `<a class="card" href="${href}">
+          <img class="thumb" src="${p.cover}" loading="lazy" alt="${p.name}">
+          <div class="card-body">
+            <div class="title">${p.name}</div>
+            <div class="meta">${p.path}</div>
+            <div class="badges">
+              <span class="badge">${p.category}</span>
+              <span class="badge">${p.count} images</span>
+            </div>
+          </div>
+        </a>`;
+      }).join('');
+    }
+
+    function renderImageCards(images) {
+      return images.map(i => `
+        <a class="card" href="${i.path}" target="_blank" rel="noopener noreferrer">
+          <img class="thumb" src="${i.path}" loading="lazy" alt="${i.name}">
+          <div class="card-body">
+            <div class="title">${i.name}</div>
+            <div class="meta">${i.projectPath}</div>
+            <div class="badges"><span class="badge">${i.category}</span><span class="badge">Image</span></div>
+          </div>
+        </a>
+      `).join('');
+    }
+
+    function render() {
+      results.className = `results ${layout.value}`;
+      const isProjectMode = mode.value === 'projects';
+      const list = isProjectMode ? DATA.projects : DATA.images;
+
+      const filtered = list.filter(item => {
+        const text = isProjectMode
+          ? `${item.name} ${item.path} ${item.category}`
+          : `${item.name} ${item.path} ${item.projectPath} ${item.category}`;
+        return includeByCategory(item) && includeBySearch(text);
+      });
+
+      results.innerHTML = isProjectMode ? renderProjectCards(filtered) : renderImageCards(filtered);
+      empty.hidden = filtered.length !== 0;
+    }
+
+    initCategories();
+    renderChips();
+    render();
+    [search, mode, category, layout].forEach(el => el.addEventListener('input', render));
+    [mode, category, layout].forEach(el => el.addEventListener('change', render));
+  </script>
+</body>
+</html>

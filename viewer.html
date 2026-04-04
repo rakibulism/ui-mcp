@@ -45,6 +45,11 @@
           <a id="openOriginal" class="btn" target="_blank" rel="noopener noreferrer">Open original image</a>
           <a id="downloadImage" class="btn" download>Download image</a>
         </div>
+        <div class="actions" style="margin-top:10px;">
+          <a id="makeVideo" class="btn" target="_blank" rel="noopener noreferrer" href="https://reecap.vercel.app/">Make video with this project</a>
+          <button id="copyProjectUrls" class="btn" type="button" style="text-align:left;cursor:pointer;">Copy project image URLs</button>
+        </div>
+        <div id="videoHint" class="kbd">Tip: copy all project image URLs, then import them inside Reecap to quickly build a video.</div>
         <div class="kbd">Keyboard: ← previous, → next.</div>
         <div id="filmstrip" class="filmstrip"></div>
       </aside>
@@ -69,6 +74,9 @@
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
     const filmstrip = document.getElementById('filmstrip');
+    const makeVideo = document.getElementById('makeVideo');
+    const copyProjectUrls = document.getElementById('copyProjectUrls');
+    const videoHint = document.getElementById('videoHint');
 
     const project = DATA.projects.find(p => p.path === projectPath) || null;
     let images = project ? project.images.slice() : DATA.images.map(i => i.path);
@@ -82,7 +90,27 @@
 
     backLink.href = project ? `./project.html?project=${encodeURIComponent(project.path)}` : './index.html';
 
+    if (!project) {
+      makeVideo.textContent = 'Make video from current image set';
+      videoHint.textContent = 'Tip: this will copy URLs from the current image set before you switch to Reecap.';
+    }
+
     function humanName(path) { return path.split('/').pop(); }
+
+    function toAbsoluteUrl(path) {
+      return new URL(path, window.location.href).href;
+    }
+
+    async function copyUrls(list) {
+      const payload = list.map(toAbsoluteUrl).join('\n');
+      try {
+        await navigator.clipboard.writeText(payload);
+        copyProjectUrls.textContent = 'Copied project image URLs ✓';
+        setTimeout(() => { copyProjectUrls.textContent = 'Copy project image URLs'; }, 1600);
+      } catch (err) {
+        window.prompt('Clipboard access unavailable. Copy manually:', payload);
+      }
+    }
 
     function renderFilmstrip() {
       filmstrip.innerHTML = images.map((p, i) => `<img class="thumb-mini ${i===currentIndex?'active':''}" src="${p}" alt="${humanName(p)}" data-index="${i}" loading="lazy">`).join('');
@@ -120,6 +148,14 @@
 
     prevBtn.addEventListener('click', () => go(-1));
     nextBtn.addEventListener('click', () => go(1));
+    copyProjectUrls.addEventListener('click', () => copyUrls(images));
+    makeVideo.addEventListener('click', (e) => {
+      e.preventDefault();
+      copyUrls(images).finally(() => {
+        window.open('https://reecap.vercel.app/', '_blank', 'noopener,noreferrer');
+      });
+    });
+
     document.addEventListener('keydown', (e) => {
       if (e.key === 'ArrowLeft') go(-1);
       if (e.key === 'ArrowRight') go(1);

@@ -27,7 +27,7 @@ A curated collection of UI/UX design shot assets by **Rakibul**, including:
   - Layout switches: **Grid**, **List**, **Compact**
   - Search and category filtering
 - Clicking any project in project view opens `project.html` with that project's details and images.
-- Clicking an image opens `viewer.html` with previous/next navigation, filmstrip thumbnails, and download/open actions.
+- Clicking an image opens `viewer.html` with previous/next navigation, filmstrip thumbnails, download/open actions, and a **Make video with this project** shortcut to Reecap.
 
 ## Current Collection Snapshot
 

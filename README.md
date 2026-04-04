@@ -10,33 +10,34 @@ A curated collection of UI/UX design shot assets by **Rakibul**, including:
 ```text
 .
 ├── Dribbble Shot/
-│   ├── <Project Name>/
-│   │   ├── Shot image files (.png/.jpg)
-│   │   └── Additional variants/assets
-│   └── ...
 ├── Instagram Carousel Saas Shot - 1/
-│   ├── 1 - Insta/
-│   ├── 2 - Insta/
-│   └── 3 - Insta/
+├── index.html          # Public index (project/image explorer)
+├── project.html        # Per-project detail page
+├── shots-data.js       # Generated gallery dataset
+├── styles.css          # Shared styles for index + project pages
 └── README.md
 ```
 
+## Public Gallery Experience
+
+- `index.html` supports:
+  - **Project view** (browse by project card)
+  - **Single image view** (browse all images directly)
+  - Layout switches: **Grid**, **List**, **Compact**
+  - Search and category filtering
+- Clicking any project in project view opens `project.html` with that project's details and images.
+
 ## Current Collection Snapshot
 
-- **29** Dribbble project folders
-- **3** Instagram carousel groups
+- **51** project folders indexed
 - **270** total image files
-
-
-## Public Index Page
-
-Open [`index.html`](./index.html) in a browser (or serve this repository with any static file server) to browse all shots in one searchable, filterable gallery.
 
 ## How to Browse
 
-1. Open `Dribbble Shot/` for individual project shots.
-2. Open `Instagram Carousel Saas Shot - 1/` for carousel-ready post sets.
-3. Each project folder contains exported image assets (mostly PNG/JPG).
+1. Open `index.html` in a browser (or serve this repository with any static file server).
+2. Start in **Project view** to identify assets by project.
+3. Click a project card to open the dedicated project page.
+4. Switch to **Single image view** if you want a flat all-images explorer.
 
 ## License
 

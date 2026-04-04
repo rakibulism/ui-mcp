@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Project Details • Social Shots</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <a class="back" href="./index.html">← Back to index</a>
+      <h1 id="projectTitle">Project</h1>
+      <p id="projectMeta" class="sub"></p>
+      <div class="controls" style="grid-template-columns: 1fr 220px;">
+        <input id="search" placeholder="Search image name..." />
+        <select id="layout">
+          <option value="grid">Grid layout</option>
+          <option value="list">List layout</option>
+          <option value="compact">Compact layout</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="wrap">
+      <section id="results" class="results grid"></section>
+      <div id="empty" class="empty" hidden>No images found in this project.</div>
+    </div>
+  </main>
+
+  <script src="./shots-data.js"></script>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const projectPath = params.get('project');
+    const DATA = window.SHOTS_DATA;
+
+    const project = DATA.projects.find(p => p.path === projectPath);
+    const title = document.getElementById('projectTitle');
+    const meta = document.getElementById('projectMeta');
+    const search = document.getElementById('search');
+    const layout = document.getElementById('layout');
+    const results = document.getElementById('results');
+    const empty = document.getElementById('empty');
+
+    if (!project) {
+      title.textContent = 'Project not found';
+      meta.textContent = 'This project does not exist in the generated index data.';
+      empty.hidden = false;
+    } else {
+      title.textContent = project.name;
+      meta.textContent = `${project.path} • ${project.count} images • ${project.category}`;
+    }
+
+    function render() {
+      if (!project) {
+        results.innerHTML = '';
+        return;
+      }
+      results.className = `results ${layout.value}`;
+      const q = search.value.trim().toLowerCase();
+      const items = project.images
+        .map(path => {
+          const name = path.split('/').pop();
+          return { path, name };
+        })
+        .filter(i => !q || i.name.toLowerCase().includes(q));
+
+      results.innerHTML = items.map(i => `
+        <a class="card" href="${i.path}" target="_blank" rel="noopener noreferrer">
+          <img class="thumb" src="${i.path}" loading="lazy" alt="${i.name}">
+          <div class="card-body">
+            <div class="title">${i.name}</div>
+            <div class="meta">${project.path}</div>
+          </div>
+        </a>
+      `).join('');
+
+      empty.hidden = items.length !== 0;
+    }
+
+    render();
+    search.addEventListener('input', render);
+    layout.addEventListener('change', render);
+  </script>
+</body>
+</html>

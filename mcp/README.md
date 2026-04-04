@@ -1,11 +1,17 @@
 # Social Shots MCP Server
 
-This folder contains MCP servers for the Social Shots dataset.
+This project includes MCP servers and an npm CLI wrapper.
 
-## Available server runtimes
+## Main user path (npm package)
 
-- `server.mjs` — Node.js stdio MCP server (recommended for npm distribution).
-- `server.py` — Python stdio MCP server.
+After publishing to npm, users can install and run:
+
+```bash
+npm install -g social-shots-mcp
+social-shots
+```
+
+This command starts `mcp/server.py`.
 
 ## Tools exposed
 
@@ -18,50 +24,41 @@ This folder contains MCP servers for the Social Shots dataset.
 7. `get_similar_images`
 8. `create_video_sequence`
 
-## Install via npm (internet users)
+## Local development
 
-After publishing to npm, users can run:
-
-```bash
-npx social-shots-mcp
-```
-
-or install globally:
-
-```bash
-npm i -g social-shots-mcp
-social-shots-mcp
-```
-
-## Run locally from repo
-
-Node server:
-
-```bash
-node mcp/server.mjs
-```
-
-Python server:
+Run Python server directly:
 
 ```bash
 python mcp/server.py
 ```
 
-## Example MCP client config (Node)
+Run Node server directly (optional runtime):
+
+```bash
+node mcp/server.mjs
+```
+
+## Example MCP client config
 
 ```json
 {
   "mcpServers": {
     "social-shots": {
-      "command": "npx",
-      "args": ["social-shots-mcp"]
+      "command": "social-shots"
     }
   }
 }
 ```
 
+## Publish steps
+
+```bash
+npm login
+npm publish --access public
+```
+
 ## Notes
 
+- Ensure Python 3.10+ is available on systems running `social-shots`.
 - `prepare_video_payload` can return relative paths, or absolute URLs when `base_url` is provided.
 - `create_video_sequence` provides frame durations and suggested social format metadata.
-- `reecap_url` is included for quick handoff to Reecap workflows.

@@ -50,7 +50,14 @@ A minimal MCP server is available under [`mcp/server.py`](./mcp/server.py), with
 
 The MCP server includes expanded tools for tags, similarity, and video sequencing workflows.
 
-To distribute MCP publicly, this repo now includes `package.json` with a CLI bin (`social-shots-mcp`) so it can be published and installed via npm.
+To distribute MCP publicly, this repo includes `package.json` with CLI command `social-shots`.
+
+After publishing to npm, users can run:
+
+```bash
+npm install -g social-shots-mcp
+social-shots
+```
 
 ## License
 

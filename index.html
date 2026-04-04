@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Social Shots Index</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <div class="header-row"><h1>Social Shots — Public Index</h1><button id="themeToggle" class="btn theme-toggle" type="button">🌙 Dark</button></div>
+      <p class="sub">Browse by project or by individual image with multiple layouts.</p>
+      <div class="mcp-banner">
+        <strong>New:</strong> We now provide an <strong>MCP server</strong> so AI agents can connect to this UI image library and get next-level design taste.
+        <a href="./mcp/README.md" target="_blank" rel="noopener noreferrer">View MCP setup →</a>
+      </div>
+      <div class="controls">
+        <input id="search" placeholder="Search project, file, or folder..." />
+        <select id="mode">
+          <option value="projects">Project view</option>
+          <option value="images">Single image view</option>
+        </select>
+        <select id="category"></select>
+        <select id="tag"></select>
+        <select id="layout">
+          <option value="grid">Grid layout</option>
+          <option value="list">List layout</option>
+          <option value="compact">Compact layout</option>
+        </select>
+      </div>
+      <div class="chips" style="margin-top:10px;">
+        <button id="favOnly" class="btn" type="button">Show favorites only: Off</button>
+        <button id="shareFav" class="btn" type="button">Share favorites</button>
+      </div>
+      <div id="chips" class="chips"></div>
+    </div>
+  </header>
+
+  <main>
+    <div class="wrap">
+      <section id="results" class="results grid"></section>
+      <div id="empty" class="empty" hidden>No matching results.</div>
+    </div>
+  </main>
+
+  <script src="./shots-data.js"></script>
+  <script>
+    const themeToggle = document.getElementById('themeToggle');
+    const storedTheme = localStorage.getItem('social_shots_theme');
+    const prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+    const initialTheme = storedTheme || (prefersLight ? 'light' : 'dark');
+    document.body.setAttribute('data-theme', initialTheme);
+    function syncThemeButton() {
+      const light = document.body.getAttribute('data-theme') === 'light';
+      themeToggle.textContent = light ? '☀️ Light' : '🌙 Dark';
+    }
+    themeToggle.addEventListener('click', () => {
+      const next = document.body.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+      document.body.setAttribute('data-theme', next);
+      localStorage.setItem('social_shots_theme', next);
+      syncThemeButton();
+    });
+    syncThemeButton();
+
+    const DATA = window.SHOTS_DATA;
+    const TAG_SEEDS = ['dashboard','admin','crm','finance','fintech','ecommerce','seo','hr','task','portfolio','investor','analytics','education','ev','lms','sales'];
+    const results = document.getElementById('results');
+    const empty = document.getElementById('empty');
+    const search = document.getElementById('search');
+    const mode = document.getElementById('mode');
+    const category = document.getElementById('category');
+    const layout = document.getElementById('layout');
+    const chips = document.getElementById('chips');
+    const tag = document.getElementById('tag');
+    const favOnlyBtn = document.getElementById('favOnly');
+    const shareFavBtn = document.getElementById('shareFav');
+
+    const qs = new URLSearchParams(location.search);
+    const favorites = new Set((qs.get('favorites') || localStorage.getItem('social_shots_favorites') || '').split('|').filter(Boolean));
+    let favoritesOnly = false;
+
+    function persistFavorites() {
+      localStorage.setItem('social_shots_favorites', [...favorites].join('|'));
+    }
+
+    function tagsForText(s) {
+      const t = String(s).toLowerCase();
+      return TAG_SEEDS.filter(k => t.includes(k));
+    }
+
+    function itemTags(item, isProjectMode) {
+      const text = isProjectMode ? `${item.name} ${item.path}` : `${item.name} ${item.path} ${item.projectPath}`;
+      return tagsForText(text);
+    }
+
+    function renderChips() {
+      const categoryChips = Object.entries(DATA.summary)
+        .sort((a,b) => a[0].localeCompare(b[0]))
+        .map(([name, count]) => `<span class="chip">${name}: <strong>${count}</strong></span>`)
+        .join('');
+      chips.innerHTML =
+        `<span class="chip">Projects: <strong>${DATA.totals.projects}</strong></span>` +
+        `<span class="chip">Images: <strong>${DATA.totals.images}</strong></span>` +
+        `<span class="chip">Favorites: <strong>${favorites.size}</strong></span>` +
+        categoryChips;
+    }
+
+    function initCategories() {
+      category.innerHTML = ['All categories', ...Object.keys(DATA.summary).sort((a,b)=>a.localeCompare(b))]
+        .map(v => `<option value="${v}">${v}</option>`)
+        .join('');
+    }
+
+    function initTags() {
+      tag.innerHTML = ['All tags', ...TAG_SEEDS].map(v => `<option value="${v}">${v}</option>`).join('');
+    }
+
+    function includeByCategory(item) {
+      return category.value === 'All categories' || item.category === category.value;
+    }
+
+    function includeBySearch(text) {
+      const q = search.value.trim().toLowerCase();
+      return !q || text.toLowerCase().includes(q);
+    }
+
+    function includeByTag(item, isProjectMode) {
+      if (tag.value === 'All tags') return true;
+      return itemTags(item, isProjectMode).includes(tag.value);
+    }
+
+    function starButton(path) {
+      const active = favorites.has(path);
+      const label = active ? '★ Saved' : '☆ Save';
+      return `<button class="btn" data-fav="${path}" type="button">${label}</button>`;
+    }
+
+    function renderProjectCards(projects) {
+      return projects.map(p => {
+        const href = `./project.html?project=${encodeURIComponent(p.path)}`;
+        return `<article class="card">
+          <a href="${href}"><img class="thumb" src="${p.cover}" loading="lazy" alt="${p.name}"></a>
+          <div class="card-body">
+            <div class="title">${p.name}</div>
+            <div class="meta">${p.path}</div>
+            <div class="badges">
+              <span class="badge">${p.category}</span>
+              <span class="badge">${p.count} images</span>
+            </div>
+            <div class="chips" style="margin-top:8px;">${starButton(p.path)}</div>
+          </div>
+        </article>`;
+      }).join('');
+    }
+
+    function renderImageCards(images) {
+      return images.map(i => `
+        <article class="card">
+          <a href="./viewer.html?project=${encodeURIComponent(i.projectPath)}&image=${encodeURIComponent(i.path)}"><img class="thumb" src="${i.path}" loading="lazy" alt="${i.name}"></a>
+          <div class="card-body">
+            <div class="title">${i.name}</div>
+            <div class="meta">${i.projectPath}</div>
+            <div class="badges"><span class="badge">${i.category}</span><span class="badge">Image</span></div>
+          </div>
+        </article>
+      `).join('');
+    }
+
+    function attachFavoriteListeners() {
+      document.querySelectorAll('[data-fav]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const key = btn.getAttribute('data-fav');
+          if (favorites.has(key)) favorites.delete(key); else favorites.add(key);
+          persistFavorites();
+          renderChips();
+          render();
+        });
+      });
+    }
+
+    function render() {
+      results.className = `results ${layout.value}`;
+      const isProjectMode = mode.value === 'projects';
+      let list = isProjectMode ? DATA.projects : DATA.images;
+
+      list = list.filter(item => {
+        const text = isProjectMode
+          ? `${item.name} ${item.path} ${item.category}`
+          : `${item.name} ${item.path} ${item.projectPath} ${item.category}`;
+        if (!includeByCategory(item)) return false;
+        if (!includeBySearch(text)) return false;
+        if (!includeByTag(item, isProjectMode)) return false;
+        if (favoritesOnly && isProjectMode && !favorites.has(item.path)) return false;
+        return true;
+      });
+
+      results.innerHTML = isProjectMode ? renderProjectCards(list) : renderImageCards(list);
+      empty.hidden = list.length !== 0;
+      attachFavoriteListeners();
+    }
+
+    favOnlyBtn.addEventListener('click', () => {
+      favoritesOnly = !favoritesOnly;
+      favOnlyBtn.textContent = `Show favorites only: ${favoritesOnly ? 'On' : 'Off'}`;
+      render();
+    });
+
+    shareFavBtn.addEventListener('click', async () => {
+      const link = `${location.origin}${location.pathname}?favorites=${encodeURIComponent([...favorites].join('|'))}`;
+      try {
+        await navigator.clipboard.writeText(link);
+        shareFavBtn.textContent = 'Link copied ✓';
+        setTimeout(() => shareFavBtn.textContent = 'Share favorites', 1400);
+      } catch {
+        window.prompt('Copy this favorites link:', link);
+      }
+    });
+
+    initCategories();
+    initTags();
+    renderChips();
+    render();
+    [search, mode, category, layout, tag].forEach(el => el.addEventListener('input', render));
+    [mode, category, layout, tag].forEach(el => el.addEventListener('change', render));
+  </script>
+</body>
+</html>

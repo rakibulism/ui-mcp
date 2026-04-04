@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Image Viewer • Social Shots</title>
+  <link rel="stylesheet" href="./styles.css" />
+  <style>
+    .viewer-layout { display: grid; grid-template-columns: 1fr 320px; gap: 14px; }
+    .stage { border: 1px solid var(--line); border-radius: 14px; background: #0f1b32; min-height: 68vh; display: grid; place-items: center; position: relative; overflow: hidden; }
+    .hero { max-width: 100%; max-height: 68vh; object-fit: contain; }
+    .nav-btn { position: absolute; top: 50%; transform: translateY(-50%); border: 1px solid var(--line); background: rgba(13,22,41,.9); color: var(--text); border-radius: 999px; width: 42px; height: 42px; cursor: pointer; }
+    .nav-prev { left: 10px; }
+    .nav-next { right: 10px; }
+    .side { border: 1px solid var(--line); border-radius: 14px; background: var(--panel); padding: 12px; }
+    .side h2 { font-size: 1rem; margin-bottom: 6px; }
+    .actions { display: grid; gap: 8px; margin-top: 12px; }
+    .btn { display: inline-block; text-decoration: none; border: 1px solid var(--line); border-radius: 10px; color: var(--text); padding: 9px 10px; background: #16213a; }
+    .filmstrip { margin-top: 12px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; max-height: 320px; overflow: auto; }
+    .thumb-mini { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 8px; border: 1px solid transparent; cursor: pointer; }
+    .thumb-mini.active { border-color: #6ea8fe; }
+    .kbd { font-size: .75rem; color: var(--muted); margin-top: 8px; }
+    @media (max-width: 980px) { .viewer-layout { grid-template-columns: 1fr; } .side { order: -1; } }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <a id="backLink" class="back" href="./index.html">← Back</a>
+      <div class="header-row"><h1 id="title">Image Viewer</h1><button id="themeToggle" class="btn theme-toggle" type="button">🌙 Dark</button></div>
+      <p id="meta" class="sub"></p>
+    </div>
+  </header>
+  <main>
+    <div class="wrap viewer-layout">
+      <section class="stage">
+        <button id="prevBtn" class="nav-btn nav-prev" aria-label="Previous image">‹</button>
+        <img id="hero" class="hero" alt="Preview" />
+        <button id="nextBtn" class="nav-btn nav-next" aria-label="Next image">›</button>
+      </section>
+      <aside class="side">
+        <h2 id="name"></h2>
+        <div id="position" class="meta"></div>
+        <div class="actions">
+          <a id="openOriginal" class="btn" target="_blank" rel="noopener noreferrer">Open original image</a>
+          <a id="downloadImage" class="btn" download>Download image</a>
+        </div>
+        <div class="actions" style="margin-top:10px;">
+          <a id="makeVideo" class="btn" target="_blank" rel="noopener noreferrer" href="https://reecap.vercel.app/">Make video with this project</a>
+          <button id="copyProjectUrls" class="btn" type="button" style="text-align:left;cursor:pointer;">Copy project image URLs</button>
+        </div>
+        <div id="videoHint" class="kbd">Tip: copy all project image URLs, then import them inside Reecap to quickly build a video.</div>
+        <div class="kbd">Keyboard: ← previous, → next.</div>
+        <div id="filmstrip" class="filmstrip"></div>
+      </aside>
+    </div>
+  </main>
+
+  <script src="./shots-data.js"></script>
+  <script>
+    const themeToggle = document.getElementById('themeToggle');
+    const storedTheme = localStorage.getItem('social_shots_theme');
+    const prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+    const initialTheme = storedTheme || (prefersLight ? 'light' : 'dark');
+    document.body.setAttribute('data-theme', initialTheme);
+    function syncThemeButton() {
+      const light = document.body.getAttribute('data-theme') === 'light';
+      themeToggle.textContent = light ? '☀️ Light' : '🌙 Dark';
+    }
+    themeToggle.addEventListener('click', () => {
+      const next = document.body.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+      document.body.setAttribute('data-theme', next);
+      localStorage.setItem('social_shots_theme', next);
+      syncThemeButton();
+    });
+    syncThemeButton();
+
+    const DATA = window.SHOTS_DATA;
+    const params = new URLSearchParams(window.location.search);
+    const projectPath = params.get('project');
+    const imagePath = params.get('image');
+
+    const backLink = document.getElementById('backLink');
+    const title = document.getElementById('title');
+    const meta = document.getElementById('meta');
+    const hero = document.getElementById('hero');
+    const name = document.getElementById('name');
+    const position = document.getElementById('position');
+    const openOriginal = document.getElementById('openOriginal');
+    const downloadImage = document.getElementById('downloadImage');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const filmstrip = document.getElementById('filmstrip');
+    const makeVideo = document.getElementById('makeVideo');
+    const copyProjectUrls = document.getElementById('copyProjectUrls');
+    const videoHint = document.getElementById('videoHint');
+
+    const project = DATA.projects.find(p => p.path === projectPath) || null;
+    let images = project ? project.images.slice() : DATA.images.map(i => i.path);
+    if (!images.length) {
+      title.textContent = 'No images available';
+      meta.textContent = 'The gallery dataset appears to be empty.';
+    }
+
+    let currentIndex = Math.max(0, images.findIndex(p => p === imagePath));
+    if (currentIndex < 0) currentIndex = 0;
+
+    backLink.href = project ? `./project.html?project=${encodeURIComponent(project.path)}` : './index.html';
+
+    if (!project) {
+      makeVideo.textContent = 'Make video from current image set';
+      videoHint.textContent = 'Tip: this will copy URLs from the current image set before you switch to Reecap.';
+    }
+
+    function humanName(path) { return path.split('/').pop(); }
+
+    function toAbsoluteUrl(path) {
+      return new URL(path, window.location.href).href;
+    }
+
+    async function copyUrls(list) {
+      const payload = list.map(toAbsoluteUrl).join('\n');
+      try {
+        await navigator.clipboard.writeText(payload);
+        copyProjectUrls.textContent = 'Copied project image URLs ✓';
+        setTimeout(() => { copyProjectUrls.textContent = 'Copy project image URLs'; }, 1600);
+      } catch (err) {
+        window.prompt('Clipboard access unavailable. Copy manually:', payload);
+      }
+    }
+
+    function renderFilmstrip() {
+      filmstrip.innerHTML = images.map((p, i) => `<img class="thumb-mini ${i===currentIndex?'active':''}" src="${p}" alt="${humanName(p)}" data-index="${i}" loading="lazy">`).join('');
+      filmstrip.querySelectorAll('img').forEach(img => {
+        img.addEventListener('click', () => {
+          currentIndex = Number(img.dataset.index);
+          render();
+        });
+      });
+    }
+
+    function render() {
+      const path = images[currentIndex];
+      if (!path) return;
+      const imageName = humanName(path);
+      title.textContent = project ? project.name : 'All Images Viewer';
+      meta.textContent = project ? `${project.path}` : 'Viewing from the full image collection';
+      name.textContent = imageName;
+      position.textContent = `Image ${currentIndex + 1} of ${images.length}`;
+      hero.src = path;
+      hero.alt = imageName;
+      openOriginal.href = path;
+      downloadImage.href = path;
+      prevBtn.disabled = currentIndex === 0;
+      nextBtn.disabled = currentIndex === images.length - 1;
+      renderFilmstrip();
+    }
+
+    function go(delta) {
+      const next = currentIndex + delta;
+      if (next < 0 || next >= images.length) return;
+      currentIndex = next;
+      render();
+    }
+
+    prevBtn.addEventListener('click', () => go(-1));
+    nextBtn.addEventListener('click', () => go(1));
+    copyProjectUrls.addEventListener('click', () => copyUrls(images));
+    makeVideo.addEventListener('click', (e) => {
+      e.preventDefault();
+      copyUrls(images).finally(() => {
+        window.open('https://reecap.vercel.app/', '_blank', 'noopener,noreferrer');
+      });
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') go(-1);
+      if (e.key === 'ArrowRight') go(1);
+    });
+
+    render();
+  </script>
+</body>
+</html>

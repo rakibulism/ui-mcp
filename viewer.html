@@ -27,7 +27,7 @@
   <header>
     <div class="wrap">
       <a id="backLink" class="back" href="./index.html">← Back</a>
-      <h1 id="title">Image Viewer</h1>
+      <div class="header-row"><h1 id="title">Image Viewer</h1><button id="themeToggle" class="btn theme-toggle" type="button">🌙 Dark</button></div>
       <p id="meta" class="sub"></p>
     </div>
   </header>
@@ -58,6 +58,23 @@
 
   <script src="./shots-data.js"></script>
   <script>
+    const themeToggle = document.getElementById('themeToggle');
+    const storedTheme = localStorage.getItem('social_shots_theme');
+    const prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+    const initialTheme = storedTheme || (prefersLight ? 'light' : 'dark');
+    document.body.setAttribute('data-theme', initialTheme);
+    function syncThemeButton() {
+      const light = document.body.getAttribute('data-theme') === 'light';
+      themeToggle.textContent = light ? '☀️ Light' : '🌙 Dark';
+    }
+    themeToggle.addEventListener('click', () => {
+      const next = document.body.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+      document.body.setAttribute('data-theme', next);
+      localStorage.setItem('social_shots_theme', next);
+      syncThemeButton();
+    });
+    syncThemeButton();
+
     const DATA = window.SHOTS_DATA;
     const params = new URLSearchParams(window.location.search);
     const projectPath = params.get('project');

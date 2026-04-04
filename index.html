@@ -9,7 +9,7 @@
 <body>
   <header>
     <div class="wrap">
-      <h1>Social Shots — Public Index</h1>
+      <div class="header-row"><h1>Social Shots — Public Index</h1><button id="themeToggle" class="btn theme-toggle" type="button">🌙 Dark</button></div>
       <p class="sub">Browse by project or by individual image with multiple layouts.</p>
       <div class="mcp-banner">
         <strong>New:</strong> We now provide an <strong>MCP server</strong> so AI agents can connect to this UI image library and get next-level design taste.
@@ -46,6 +46,23 @@
 
   <script src="./shots-data.js"></script>
   <script>
+    const themeToggle = document.getElementById('themeToggle');
+    const storedTheme = localStorage.getItem('social_shots_theme');
+    const prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+    const initialTheme = storedTheme || (prefersLight ? 'light' : 'dark');
+    document.body.setAttribute('data-theme', initialTheme);
+    function syncThemeButton() {
+      const light = document.body.getAttribute('data-theme') === 'light';
+      themeToggle.textContent = light ? '☀️ Light' : '🌙 Dark';
+    }
+    themeToggle.addEventListener('click', () => {
+      const next = document.body.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+      document.body.setAttribute('data-theme', next);
+      localStorage.setItem('social_shots_theme', next);
+      syncThemeButton();
+    });
+    syncThemeButton();
+
     const DATA = window.SHOTS_DATA;
     const TAG_SEEDS = ['dashboard','admin','crm','finance','fintech','ecommerce','seo','hr','task','portfolio','investor','analytics','education','ev','lms','sales'];
     const results = document.getElementById('results');

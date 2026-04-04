@@ -1,139 +1,64 @@
-# Social Shots MCP
+# Social Shots
 
-A curated collection of UI/UX design shot assets by **Rakibul**, published as an **npm package** that ships an MCP (Model Context Protocol) server for AI-powered design workflows.
-
-[![npm version](https://img.shields.io/npm/v/social-shots-mcp.svg?style=flat-square&color=cb3837&logo=npm)](https://www.npmjs.com/package/social-shots-mcp)
-[![npm downloads](https://img.shields.io/npm/dm/social-shots-mcp.svg?style=flat-square&color=cb3837)](https://www.npmjs.com/package/social-shots-mcp)
-[![npm unpacked size](https://img.shields.io/npm/unpacked-size/social-shots-mcp?style=flat-square)](https://www.npmjs.com/package/social-shots-mcp)
-[![Node.js](https://img.shields.io/node/v/social-shots-mcp?style=flat-square&logo=node.js&color=3c873a)](https://nodejs.org)
-[![GitHub repo](https://img.shields.io/badge/GitHub-rakibulism%2Fsocial--shots-181717?style=flat-square&logo=github)](https://github.com/rakibulism/social-shots)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](./LICENSE)
-
----
-
-## Quick Start
-
-### Install via npm
-
-```bash
-npm install -g social-shots-mcp
-```
-
-### Install directly from GitHub
-
-```bash
-# Latest from main branch
-npm install -g rakibulism/social-shots
-
-# Or a specific branch
-npm install -g rakibulism/social-shots#main
-```
-
-### Run the MCP Server
-
-```bash
-social-shots
-```
-
-This will automatically:
-1. Install any required Python dependencies (`pip3` / `pip`)
-2. Start the MCP server via stdio transport
-
-> **Requires Python 3** to be installed on your system.
-
----
-
-## What's Inside
-
-A gallery of **51 projects** and **270 design images** covering:
+A curated collection of UI/UX design shot assets by **Rakibul**, including:
 
 - **Dribbble shots** (single-shot project folders)
 - **Instagram carousel shots** (1/1, 1/2, and 1/3 carousel formats)
 
----
-
-## MCP Tools
-
-Once running, the MCP server exposes the following tools to AI assistants (e.g. Claude, Cursor, Copilot):
-
-| Tool | Description |
-|---|---|
-| `get_gallery_stats` | Returns totals and category summary |
-| `list_projects` | Lists projects with optional category filter and pagination |
-| `get_project_images` | Returns all images for a specific project |
-| `search_images` | Search images by text query |
-| `prepare_video_payload` | Returns project image URLs for video workflows |
-| `get_similar_images` | Finds visually related images via keyword similarity |
-| `create_video_sequence` | Creates an ordered image sequence for video editors |
-| `list_tags` | Returns supported design tags used for filtering |
-
----
-
-## Connect to Claude Desktop (or any MCP client)
-
-Add this to your MCP client config:
-
-```json
-{
-  "mcpServers": {
-    "social-shots": {
-      "command": "social-shots"
-    }
-  }
-}
-```
-
-For Claude Desktop, edit `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS).
-
----
-
-## Manual Setup (without npm)
-
-If you prefer to run the server directly:
-
-```bash
-git clone https://github.com/rakibulism/social-shots.git
-cd social-shots
-pip3 install -r mcp/requirements.txt
-python3 mcp/server.py
-```
-
----
-
-## Repository Structure (Full Clone)
-
-The GitHub repo contains the full asset library:
+## Repository Structure
 
 ```text
 .
-├── Dribbble Shot/                  # Single-shot projects
-├── Instagram Carousel Saas Shot/   # Carousel shot projects
-├── mcp/
-│   ├── server.py                   # Python MCP server (stdio)
-│   ├── server.mjs                  # JS variant
-│   ├── requirements.txt            # Python dependencies
-│   └── README.md
-├── index.html                      # Public gallery explorer
-├── project.html                    # Per-project detail page
-├── shots-data.js                   # Generated gallery dataset
-├── styles.css                      # Shared gallery styles
-├── viewer.html                     # Dedicated image viewer
-├── index.js                        # CLI entry point
+├── Dribbble Shot/
+├── Instagram Carousel Saas Shot - 1/
+├── index.html          # Public index (project/image explorer)
+├── project.html        # Per-project detail page
+├── shots-data.js       # Generated gallery dataset
+├── styles.css          # Shared styles for all gallery pages
+├── viewer.html         # Dedicated image viewer experience
 └── README.md
 ```
 
----
+## Public Gallery Experience
 
-## Public Gallery
+- `index.html` supports:
+  - **Project view** (browse by project card)
+  - **Single image view** (browse all images directly)
+  - Layout switches: **Grid**, **List**, **Compact**
+  - Light / Dark mode toggle
+  - Search, category filtering, and design tag filtering
+  - Favorites collections (save projects + share favorites link)
+- Clicking any project in project view opens `project.html` with that project's details and images.
+- Clicking an image opens `viewer.html` with previous/next navigation, filmstrip thumbnails, download/open actions, and a **Make video with this project** shortcut to Reecap.
 
-Browse the full design gallery locally:
+## Current Collection Snapshot
 
-1. Clone the repo and open `index.html` in a browser (or serve with any static file server).
-2. Use **Project view** to browse assets by project.
-3. Click a project card to see details and all images.
-4. Click any image to open the viewer with navigation, download, and **Make video** shortcut to [Reecap](https://reecap.vercel.app/).
+- **51** project folders indexed
+- **270** total image files
 
----
+## How to Browse
+
+1. Open `index.html` in a browser (or serve this repository with any static file server).
+2. Start in **Project view** to identify assets by project.
+3. Click a project card to open the dedicated project page.
+4. Click any image to open the dedicated image viewer with navigation controls.
+5. Switch to **Single image view** if you want a flat all-images explorer.
+
+
+## MCP Integration
+
+A minimal MCP server is available under [`mcp/server.py`](./mcp/server.py), with setup details in [`mcp/README.md`](./mcp/README.md).
+
+The MCP server includes expanded tools for tags, similarity, and video sequencing workflows.
+
+To distribute MCP publicly, this repo includes `package.json` with CLI command `social-shots`.
+
+After publishing to npm, users can run:
+
+```bash
+npm install -g social-shots-mcp
+social-shots
+```
 
 ## License
 

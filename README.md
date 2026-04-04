@@ -2,9 +2,12 @@
 
 A curated collection of UI/UX design shot assets by **Rakibul**, published as an **npm package** that ships an MCP (Model Context Protocol) server for AI-powered design workflows.
 
-[![npm version](https://img.shields.io/npm/v/social-shots-mcp)](https://www.npmjs.com/package/social-shots-mcp)
-[![npm downloads](https://img.shields.io/npm/dm/social-shots-mcp)](https://www.npmjs.com/package/social-shots-mcp)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+[![npm version](https://img.shields.io/npm/v/social-shots-mcp.svg?style=flat-square&color=cb3837&logo=npm)](https://www.npmjs.com/package/social-shots-mcp)
+[![npm downloads](https://img.shields.io/npm/dm/social-shots-mcp.svg?style=flat-square&color=cb3837)](https://www.npmjs.com/package/social-shots-mcp)
+[![npm unpacked size](https://img.shields.io/npm/unpacked-size/social-shots-mcp?style=flat-square)](https://www.npmjs.com/package/social-shots-mcp)
+[![Node.js](https://img.shields.io/node/v/social-shots-mcp?style=flat-square&logo=node.js&color=3c873a)](https://nodejs.org)
+[![GitHub repo](https://img.shields.io/badge/GitHub-rakibulism%2Fsocial--shots-181717?style=flat-square&logo=github)](https://github.com/rakibulism/social-shots)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](./LICENSE)
 
 ---
 

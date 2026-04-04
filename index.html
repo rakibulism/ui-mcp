@@ -91,7 +91,7 @@
 
     function renderImageCards(images) {
       return images.map(i => `
-        <a class="card" href="${i.path}" target="_blank" rel="noopener noreferrer">
+        <a class="card" href="./viewer.html?project=${encodeURIComponent(i.projectPath)}&image=${encodeURIComponent(i.path)}">
           <img class="thumb" src="${i.path}" loading="lazy" alt="${i.name}">
           <div class="card-body">
             <div class="title">${i.name}</div>

@@ -14,7 +14,8 @@ A curated collection of UI/UX design shot assets by **Rakibul**, including:
 ├── index.html          # Public index (project/image explorer)
 ├── project.html        # Per-project detail page
 ├── shots-data.js       # Generated gallery dataset
-├── styles.css          # Shared styles for index + project pages
+├── styles.css          # Shared styles for all gallery pages
+├── viewer.html         # Dedicated image viewer experience
 └── README.md
 ```
 
@@ -26,6 +27,7 @@ A curated collection of UI/UX design shot assets by **Rakibul**, including:
   - Layout switches: **Grid**, **List**, **Compact**
   - Search and category filtering
 - Clicking any project in project view opens `project.html` with that project's details and images.
+- Clicking an image opens `viewer.html` with previous/next navigation, filmstrip thumbnails, and download/open actions.
 
 ## Current Collection Snapshot
 
@@ -37,7 +39,8 @@ A curated collection of UI/UX design shot assets by **Rakibul**, including:
 1. Open `index.html` in a browser (or serve this repository with any static file server).
 2. Start in **Project view** to identify assets by project.
 3. Click a project card to open the dedicated project page.
-4. Switch to **Single image view** if you want a flat all-images explorer.
+4. Click any image to open the dedicated image viewer with navigation controls.
+5. Switch to **Single image view** if you want a flat all-images explorer.
 
 ## License
 

@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Social Shots Preview</title>
+    <style>
+      :root { color-scheme: dark; --text:#e8edff; --muted:#9cabd6; --panel:#121a31; --accent:#86a8ff; }
+      * { box-sizing: border-box; }
+      body { margin:0; font-family: Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif; background:linear-gradient(180deg,#0b1020,#101936); color:var(--text); }
+      main { max-width:1120px; margin:0 auto; padding:32px 20px 48px; }
+      h1 { margin:0 0 8px; font-size:clamp(1.6rem,2.5vw,2.2rem); }
+      p { margin:0; color:var(--muted); }
+      .stats { margin:12px 0 24px; color:var(--accent); font-weight:600; }
+      .grid { display:grid; gap:18px; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); }
+      .card { background:color-mix(in srgb,var(--panel),#000 8%); border:1px solid rgba(255,255,255,.1); border-radius:14px; overflow:hidden; }
+      .card img { width:100%; aspect-ratio:4/3; object-fit:cover; display:block; background:#0f1730; }
+      .meta { padding:12px; }
+      .meta h2 { margin:0 0 4px; font-size:.96rem; line-height:1.35; }
+      .meta small { color:var(--accent); }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Social Shots Public Preview</h1>
+      <p>Standalone preview page for this repository (no build step required).</p>
+      <div class="stats" id="stats"></div>
+      <section class="grid" id="preview-grid" aria-label="Preview gallery"></section>
+    </main>
+    <script>
+      const previews = [
+      {
+            "title": "Advaz - Buy and Sell Marketplace",
+            "source": "Dribbble Shot",
+            "path": "Dribbble Shot/Advaz - Buy and Sell Marketplace/1. Wild Zoom.png"
+      },
+      {
+            "title": "Audime - Time & Workforce Management Dashboard",
+            "source": "Dribbble Shot",
+            "path": "Dribbble Shot/Audime - Time & Workforce Management Dashboard/1. Wild Zoom.png"
+      },
+      {
+            "title": "Buzzd – Social Media Performance Dashboard",
+            "source": "Dribbble Shot",
+            "path": "Dribbble Shot/Buzzd – Social Media Performance Dashboard/1. Wild Zoom.png"
+      },
+      {
+            "title": "Capivest — Investor Dashboard",
+            "source": "Dribbble Shot",
+            "path": "Dribbble Shot/Capivest — Investor Dashboard/1. Wild Zoom.png"
+      },
+      {
+            "title": "Commetrix — E-commerce Admin Dashboard",
+            "source": "Dribbble Shot",
+            "path": "Dribbble Shot/Commetrix — E-commerce Admin Dashboard/1. Wild Zoom.png"
+      },
+      {
+            "title": "Donee — Task Management Dashboard",
+            "source": "Dribbble Shot",
+            "path": "Dribbble Shot/Donee — Task Management Dashboard/1. Wild Zoom.png"
+      },
+      {
+            "title": "Ecommerce (Mono Mart)",
+            "source": "Dribbble Shot",
+            "path": "Dribbble Shot/Ecommerce (Mono Mart)/1. Wild Zoom.png"
+      },
+      {
+            "title": "Energ - EV Charging Dashboard",
+            "source": "Dribbble Shot",
+            "path": "Dribbble Shot/Energ - EV Charging Dashboard/1. Wild Zoom.png"
+      },
+      {
+            "title": "Expenso – Expense Tracking Admin Dashboard",
+            "source": "Dribbble Shot",
+            "path": "Dribbble Shot/Expenso – Expense Tracking Admin Dashboard/1. Wild Zoom.png"
+      },
+      {
+            "title": "Fincai — Al-Powered Fintech Dashboard",
+            "source": "Dribbble Shot",
+            "path": "Dribbble Shot/Fincai — Al-Powered Fintech Dashboard/1. Wild Zoom.png"
+      },
+      {
+            "title": "Finlytics - Finance Management Dashboard",
+            "source": "Dribbble Shot",
+            "path": "Dribbble Shot/Finlytics - Finance Management Dashboard/1. Wild Zoom.png"
+      },
+      {
+            "title": "Fireseo - Al SEO auditing tool",
+            "source": "Dribbble Shot",
+            "path": "Dribbble Shot/Fireseo - Al SEO auditing tool/1. Wild Zoom.png"
+      },
+      {
+            "title": "Fireseo - Al SEO auditing tool - BG Gradient",
+            "source": "Dribbble Shot",
+            "path": "Dribbble Shot/Fireseo - Al SEO auditing tool - BG Gradient/1. Wild Zoom.png"
+      },
+      {
+            "title": "HR Management Dashboard",
+            "source": "Dribbble Shot",
+            "path": "Dribbble Shot/HR Management Dashboard/1. Wild Zoom.png"
+      },
+      {
+            "title": "Listora — Property Listing Management Admin Dashboard",
+            "source": "Dribbble Shot",
+            "path": "Dribbble Shot/Listora — Property Listing Management Admin Dashboard/1. Wild Zoom.png"
+      },
+      {
+            "title": "Lurni - LMS Dashboard",
+            "source": "Dribbble Shot",
+            "path": "Dribbble Shot/Lurni - LMS Dashboard/1. Wild Zoom.png"
+      },
+      {
+            "title": "Merchlytics – E-commerce Product Management",
+            "source": "Dribbble Shot",
+            "path": "Dribbble Shot/Merchlytics – E-commerce Product Management/1. Wild Zoom.png"
+      },
+      {
+            "title": "Panacea | EHR - CRM Dashboard",
+            "source": "Dribbble Shot",
+            "path": "Dribbble Shot/Panacea | EHR - CRM Dashboard/1. Wild Zoom.png"
+      },
+      {
+            "title": "Pokecut — Admin ( AI Photo Create )",
+            "source": "Dribbble Shot",
+            "path": "Dribbble Shot/Pokecut — Admin ( AI Photo Create )/1. Wild Zoom.png"
+      },
+      {
+            "title": "Project Management Dashboard",
+            "source": "Dribbble Shot",
+            "path": "Dribbble Shot/Project Management Dashboard/1. Wild Zoom.png"
+      },
+      {
+            "title": "Relyt – Sales Performance Admin",
+            "source": "Dribbble Shot",
+            "path": "Dribbble Shot/Relyt – Sales Performance Admin/1. Wild Zoom.png"
+      },
+      {
+            "title": "RevPilot - MRR Churn Dashboard",
+            "source": "Dribbble Shot",
+            "path": "Dribbble Shot/RevPilot - MRR Churn Dashboard/1. Wild Zoom.png"
+      },
+      {
+            "title": "Salesic — Sales CRM | Portfolio Project",
+            "source": "Dribbble Shot",
+            "path": "Dribbble Shot/Salesic — Sales CRM | Portfolio Project/1. Wild Zoom.png"
+      },
+      {
+            "title": "Scholix - Gray BG — Portfolio Dashboard",
+            "source": "Dribbble Shot",
+            "path": "Dribbble Shot/Scholix - Gray BG — Portfolio Dashboard/1. Wild Zoom.png"
+      },
+      {
+            "title": "Scholix — Portfolio Dashboard",
+            "source": "Dribbble Shot",
+            "path": "Dribbble Shot/Scholix — Portfolio Dashboard/1. Wild Zoom.png"
+      },
+      {
+            "title": "Sell Bridge - Seller Dashboard",
+            "source": "Dribbble Shot",
+            "path": "Dribbble Shot/Sell Bridge - Seller Dashboard/1. Wild Zoom.png"
+      },
+      {
+            "title": "Ticket Service",
+            "source": "Dribbble Shot",
+            "path": "Dribbble Shot/Ticket Service/1. Wild Zoom.png"
+      },
+      {
+            "title": "Trior — Task Management Dashboard",
+            "source": "Dribbble Shot",
+            "path": "Dribbble Shot/Trior — Task Management Dashboard/1. Wild Zoom.png"
+      },
+      {
+            "title": "Alyze | Analytics Dashboard",
+            "source": "Instagram Carousel Saas Shot - 1/1 - Insta",
+            "path": "Instagram Carousel Saas Shot - 1/1 - Insta/Alyze | Analytics Dashboard/Instagram post - 1.png"
+      },
+      {
+            "title": "Buzzd – Social Media Performance Dashboard",
+            "source": "Instagram Carousel Saas Shot - 1/1 - Insta",
+            "path": "Instagram Carousel Saas Shot - 1/1 - Insta/Buzzd – Social Media Performance Dashboard/Instagram post - 1.png"
+      },
+      {
+            "title": "Finlytics - Finance Management Dashboard",
+            "source": "Instagram Carousel Saas Shot - 1/1 - Insta",
+            "path": "Instagram Carousel Saas Shot - 1/1 - Insta/Finlytics - Finance Management Dashboard/Instagram post - 1.png"
+      },
+      {
+            "title": "Lurni - LMS Dashboard",
+            "source": "Instagram Carousel Saas Shot - 1/1 - Insta",
+            "path": "Instagram Carousel Saas Shot - 1/1 - Insta/Lurni - LMS Dashboard/Instagram post - 1.png"
+      },
+      {
+            "title": "POS - Billing & Inventory Dashboard - 2024",
+            "source": "Instagram Carousel Saas Shot - 1/1 - Insta",
+            "path": "Instagram Carousel Saas Shot - 1/1 - Insta/POS - Billing & Inventory Dashboard - 2024/Instagram post - 1.png"
+      },
+      {
+            "title": "Project Management Dashboard",
+            "source": "Instagram Carousel Saas Shot - 1/1 - Insta",
+            "path": "Instagram Carousel Saas Shot - 1/1 - Insta/Project Management Dashboard/Instagram post - 1.png"
+      },
+      {
+            "title": "Sell Bridge - Seller Dashboard",
+            "source": "Instagram Carousel Saas Shot - 1/1 - Insta",
+            "path": "Instagram Carousel Saas Shot - 1/1 - Insta/Sell Bridge - Seller Dashboard/Instagram post - 1.png"
+      },
+      {
+            "title": "Advaz - Buy and Sell Marketplace",
+            "source": "Instagram Carousel Saas Shot - 1/2 - Insta",
+            "path": "Instagram Carousel Saas Shot - 1/2 - Insta/Advaz - Buy and Sell Marketplace/Instagram post - 1.png"
+      },
+      {
+            "title": "Donee — Task Management Dashboard",
+            "source": "Instagram Carousel Saas Shot - 1/2 - Insta",
+            "path": "Instagram Carousel Saas Shot - 1/2 - Insta/Donee — Task Management Dashboard/Instagram post - 1.png"
+      },
+      {
+            "title": "Ecommerce (Mono Mart)",
+            "source": "Instagram Carousel Saas Shot - 1/2 - Insta",
+            "path": "Instagram Carousel Saas Shot - 1/2 - Insta/Ecommerce (Mono Mart)/Instagram post - 1.png"
+      },
+      {
+            "title": "Energ - EV Charging Dashboard",
+            "source": "Instagram Carousel Saas Shot - 1/2 - Insta",
+            "path": "Instagram Carousel Saas Shot - 1/2 - Insta/Energ - EV Charging Dashboard/Instagram post - 1.png"
+      },
+      {
+            "title": "RevPilot - MRR Churn Dashboard",
+            "source": "Instagram Carousel Saas Shot - 1/2 - Insta",
+            "path": "Instagram Carousel Saas Shot - 1/2 - Insta/RevPilot - MRR Churn Dashboard/Instagram post - 1.png"
+      },
+      {
+            "title": "Scholix — Portfolio Dashboard",
+            "source": "Instagram Carousel Saas Shot - 1/2 - Insta",
+            "path": "Instagram Carousel Saas Shot - 1/2 - Insta/Scholix — Portfolio Dashboard/Instagram post - 1.png"
+      },
+      {
+            "title": "Vesty - Real Estate Dashboard",
+            "source": "Instagram Carousel Saas Shot - 1/2 - Insta",
+            "path": "Instagram Carousel Saas Shot - 1/2 - Insta/Vesty - Real Estate Dashboard/Instagram post - 1.png"
+      },
+      {
+            "title": "ZenHR - HR Management Dashboard",
+            "source": "Instagram Carousel Saas Shot - 1/2 - Insta",
+            "path": "Instagram Carousel Saas Shot - 1/2 - Insta/ZenHR - HR Management Dashboard/Instagram post - 1.png"
+      },
+      {
+            "title": "Audime - Time & Workforce Management Dashboard",
+            "source": "Instagram Carousel Saas Shot - 1/3 - Insta",
+            "path": "Instagram Carousel Saas Shot - 1/3 - Insta/Audime - Time & Workforce Management Dashboard/Instagram post - 1.png"
+      },
+      {
+            "title": "Capivest — Investor Dashboard",
+            "source": "Instagram Carousel Saas Shot - 1/3 - Insta",
+            "path": "Instagram Carousel Saas Shot - 1/3 - Insta/Capivest — Investor Dashboard/Instagram post - 1.png"
+      },
+      {
+            "title": "Expenso – Expense Tracking Admin Dashboard",
+            "source": "Instagram Carousel Saas Shot - 1/3 - Insta",
+            "path": "Instagram Carousel Saas Shot - 1/3 - Insta/Expenso – Expense Tracking Admin Dashboard/Instagram post - 1.png"
+      },
+      {
+            "title": "Fireseo - Al SEO auditing tool",
+            "source": "Instagram Carousel Saas Shot - 1/3 - Insta",
+            "path": "Instagram Carousel Saas Shot - 1/3 - Insta/Fireseo - Al SEO auditing tool/Instagram post - 1.png"
+      },
+      {
+            "title": "Orderze - Ecommerce Assistant Dashboard",
+            "source": "Instagram Carousel Saas Shot - 1/3 - Insta",
+            "path": "Instagram Carousel Saas Shot - 1/3 - Insta/Orderze - Ecommerce Assistant Dashboard/Instagram post - 1.png"
+      },
+      {
+            "title": "Panacea | EHR - CRM Dashboard",
+            "source": "Instagram Carousel Saas Shot - 1/3 - Insta",
+            "path": "Instagram Carousel Saas Shot - 1/3 - Insta/Panacea | EHR - CRM Dashboard/Instagram post - 1.png"
+      },
+      {
+            "title": "Ticket Service",
+            "source": "Instagram Carousel Saas Shot - 1/3 - Insta",
+            "path": "Instagram Carousel Saas Shot - 1/3 - Insta/Ticket Service/Instagram post - 1.png"
+      }
+];
+      document.getElementById('stats').textContent = `Showing ${previews.length} projects`;
+      const grid = document.getElementById('preview-grid');
+      previews.forEach((item) => {
+        const card = document.createElement('article');
+        card.className = 'card';
+        card.innerHTML = `
+          <img src="${encodeURI(item.path)}" alt="${item.title} preview" loading="lazy" />
+          <div class="meta">
+            <h2>${item.title}</h2>
+            <small>${item.source}</small>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    </script>
+  </body>
+</html>

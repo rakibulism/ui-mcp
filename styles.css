@@ -24,6 +24,22 @@ header {
 .wrap { max-width: 1200px; margin: 0 auto; padding: 14px; }
 h1, h2, h3 { margin: 0; }
 .sub { color: var(--muted); margin-top: 6px; }
+
+.mcp-banner {
+  margin-top: 10px;
+  border: 1px solid #31508a;
+  background: linear-gradient(90deg, rgba(35,53,95,.8), rgba(20,30,54,.8));
+  color: #d7e5ff;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: .9rem;
+}
+.mcp-banner a {
+  color: #9ec5ff;
+  text-decoration: none;
+  margin-left: 10px;
+  font-weight: 600;
+}
 .controls {
   margin-top: 12px;
   display: grid;

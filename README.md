@@ -43,6 +43,10 @@ A curated collection of UI/UX design shot assets by **Rakibul**, including:
 5. Switch to **Single image view** if you want a flat all-images explorer.
 
 
+## MCP Integration
+
+A minimal MCP server is available under [`mcp/server.py`](./mcp/server.py), with setup details in [`mcp/README.md`](./mcp/README.md).
+
 ## License
 
 This repository is distributed under the terms of the [LICENSE](./LICENSE) file.

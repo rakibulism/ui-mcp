@@ -16,6 +16,16 @@ A curated collection of UI/UX design shot assets by **Rakibul**, published as an
 npm install -g social-shots-mcp
 ```
 
+### Install directly from GitHub
+
+```bash
+# Latest from main branch
+npm install -g rakibulism/social-shots
+
+# Or a specific branch
+npm install -g rakibulism/social-shots#main
+```
+
 ### Run the MCP Server
 
 ```bash

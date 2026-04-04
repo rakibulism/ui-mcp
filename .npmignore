@@ -1,0 +1,14 @@
+node_modules/
+*.log
+*.tgz
+Dribbble Shot/
+Instagram*/
+*Shot*/
+project.html
+viewer.html
+styles.css
+index.html
+shots-data.js
+.DS_Store
+.git/
+.gitattributes

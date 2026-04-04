@@ -27,6 +27,11 @@ A curated collection of UI/UX design shot assets by **Rakibul**, including:
 - **3** Instagram carousel groups
 - **270** total image files
 
+
+## Public Index Page
+
+Open [`index.html`](./index.html) in a browser (or serve this repository with any static file server) to browse all shots in one searchable, filterable gallery.
+
 ## How to Browse
 
 1. Open `Dribbble Shot/` for individual project shots.

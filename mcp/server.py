@@ -3,29 +3,61 @@
 
 from __future__ import annotations
 
+import argparse
 import json
+import os
 import re
 import sys
 from pathlib import Path
 from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
-DATA_FILE = ROOT / "shots-data.js"
+DEFAULT_DATA_FILE = ROOT / "shots-data.js"
 TAG_SEEDS = [
     "dashboard", "admin", "crm", "finance", "fintech", "ecommerce", "seo", "hr",
     "task", "portfolio", "investor", "analytics", "education", "ev", "lms", "sales",
 ]
 
+DATA: dict[str, Any] = {}
 
-def load_data() -> dict[str, Any]:
-    raw = DATA_FILE.read_text(encoding="utf-8").strip()
+
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Run the Social Shots MCP server.")
+    parser.add_argument(
+        "--data",
+        type=Path,
+        help="Path to shots-data.js (can also be provided via SHOTS_DATA_PATH).",
+    )
+    return parser.parse_args(argv)
+
+
+def resolve_data_file(data_arg: Path | None) -> Path:
+    selected = data_arg or os.getenv("SHOTS_DATA_PATH")
+
+    if selected:
+        path = Path(selected).expanduser().resolve()
+        if not path.exists():
+            raise RuntimeError(
+                f"shots-data.js not found at: {path}. "
+                "Please provide --data /path/to/shots-data.js or set SHOTS_DATA_PATH."
+            )
+        return path
+
+    if DEFAULT_DATA_FILE.exists():
+        return DEFAULT_DATA_FILE
+
+    raise RuntimeError(
+        "shots-data.js is required but was not found. "
+        "Please provide --data /path/to/shots-data.js or set SHOTS_DATA_PATH."
+    )
+
+
+def load_data(data_file: Path) -> dict[str, Any]:
+    raw = data_file.read_text(encoding="utf-8").strip()
     prefix = "window.SHOTS_DATA = "
     if not raw.startswith(prefix) or not raw.endswith(";"):
-        raise RuntimeError("shots-data.js is not in expected format")
+        raise RuntimeError(f"{data_file} is not in expected format")
     return json.loads(raw[len(prefix) : -1])
-
-
-DATA = load_data()
 
 
 def _json_response(id_value: Any, result: Any = None, error: Any = None) -> dict[str, Any]:
@@ -177,7 +209,17 @@ def handle(req: dict[str, Any]) -> dict[str, Any] | None:
     return _json_response(id_value, error={"code": -32601, "message": f"Method not found: {method}"})
 
 
-def main() -> int:
+def main(argv: list[str] | None = None) -> int:
+    global DATA
+
+    args = parse_args(argv)
+    try:
+        data_file = resolve_data_file(args.data)
+        DATA = load_data(data_file)
+    except Exception as exc:  # noqa: BLE001
+        print(f"Failed to load shots data: {exc}", file=sys.stderr)
+        return 1
+
     for line in sys.stdin:
         line = line.strip()
         if not line:

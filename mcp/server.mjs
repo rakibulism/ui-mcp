@@ -7,21 +7,56 @@ import { fileURLToPath } from 'node:url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT = path.resolve(__dirname, '..');
-const DATA_FILE = path.join(ROOT, 'shots-data.js');
+const DEFAULT_DATA_FILE = path.join(ROOT, 'shots-data.js');
 
 const TAG_SEEDS = [
-  'dashboard','admin','crm','finance','fintech','ecommerce','seo','hr',
-  'task','portfolio','investor','analytics','education','ev','lms','sales'
+  'dashboard', 'admin', 'crm', 'finance', 'fintech', 'ecommerce', 'seo', 'hr',
+  'task', 'portfolio', 'investor', 'analytics', 'education', 'ev', 'lms', 'sales'
 ];
 
-function loadData() {
-  const raw = fs.readFileSync(DATA_FILE, 'utf8').trim();
+function parseArgs(argv = process.argv.slice(2)) {
+  const args = {};
+  for (let i = 0; i < argv.length; i += 1) {
+    const token = argv[i];
+    if (token === '--data') {
+      args.data = argv[i + 1];
+      i += 1;
+    }
+  }
+  return args;
+}
+
+function resolveDataFile(dataArg) {
+  const selected = dataArg || process.env.SHOTS_DATA_PATH;
+  if (selected) {
+    const resolved = path.resolve(selected);
+    if (!fs.existsSync(resolved)) {
+      throw new Error(`shots-data.js not found at: ${resolved}. Please provide --data /path/to/shots-data.js or set SHOTS_DATA_PATH.`);
+    }
+    return resolved;
+  }
+
+  if (fs.existsSync(DEFAULT_DATA_FILE)) return DEFAULT_DATA_FILE;
+
+  throw new Error('shots-data.js is required but was not found. Please provide --data /path/to/shots-data.js or set SHOTS_DATA_PATH.');
+}
+
+function loadData(dataFile) {
+  const raw = fs.readFileSync(dataFile, 'utf8').trim();
   const prefix = 'window.SHOTS_DATA = ';
-  if (!raw.startsWith(prefix) || !raw.endsWith(';')) throw new Error('shots-data.js format invalid');
+  if (!raw.startsWith(prefix) || !raw.endsWith(';')) throw new Error(`${dataFile} format invalid`);
   return JSON.parse(raw.slice(prefix.length, -1));
 }
 
-const DATA = loadData();
+let DATA;
+try {
+  const args = parseArgs();
+  const dataFile = resolveDataFile(args.data);
+  DATA = loadData(dataFile);
+} catch (err) {
+  console.error(`Failed to load shots data: ${err.message}`);
+  process.exit(1);
+}
 
 const jsonResponse = (id, result, error = null) =>
   error ? { jsonrpc: '2.0', id, error } : { jsonrpc: '2.0', id, result };

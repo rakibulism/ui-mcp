@@ -57,8 +57,16 @@ After publishing to npm, users can run:
 
 ```bash
 npm install -g social-shots-mcp
-social-shots
+social-shots --data /path/to/shots-data.js
 ```
+
+You can also provide the data file path via environment variable:
+
+```bash
+SHOTS_DATA_PATH=/path/to/shots-data.js social-shots
+```
+
+If the file is missing, the CLI now exits with a clear error message instead of crashing.
 
 ## License
 

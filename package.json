@@ -5,11 +5,14 @@
   "bin": {
     "social-shots": "index.js"
   },
-  "dependencies": {
-    "execa": "^7.1.0"
-  },
   "engines": {
     "node": ">=18"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "files": [
+    "index.js",
+    "mcp/",
+    "README.md",
+    "LICENSE"
+  ]
 }

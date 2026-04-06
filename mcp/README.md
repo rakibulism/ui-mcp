@@ -8,10 +8,18 @@ After publishing to npm, users can install and run:
 
 ```bash
 npm install -g social-shots-mcp
-social-shots
+social-shots --data /path/to/shots-data.js
 ```
 
 This command starts `mcp/server.py`.
+
+Or use an environment variable:
+
+```bash
+SHOTS_DATA_PATH=/path/to/shots-data.js social-shots
+```
+
+If no data file is found, the server exits with a clear guidance message.
 
 ## Tools exposed
 
@@ -29,13 +37,13 @@ This command starts `mcp/server.py`.
 Run Python server directly:
 
 ```bash
-python mcp/server.py
+python mcp/server.py --data /path/to/shots-data.js
 ```
 
 Run Node server directly (optional runtime):
 
 ```bash
-node mcp/server.mjs
+node mcp/server.mjs --data /path/to/shots-data.js
 ```
 
 ## Example MCP client config

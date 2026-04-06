@@ -1,6 +1,6 @@
 {
   "name": "social-shots-mcp",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "CLI to run MCP server from Social Shots project",
   "bin": {
     "social-shots": "index.js"
